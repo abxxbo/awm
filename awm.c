@@ -25,6 +25,9 @@ int main(void){
   XGrabButton(dpy, 3, Mod4Mask, DefaultRootWindow(dpy), True,
               ButtonPressMask|ButtonReleaseMask|PointerMotionMask, GrabModeAsync, GrabModeAsync, None, None);
 
+  // Run autostart
+  system("/bin/bash ~/.config/awm/autostart");
+  // Run keybind daemon -- in the future: dont use system
   system("sxhkd -c ~/.config/awm/sxhkdrc &");
 
   // Event loop
