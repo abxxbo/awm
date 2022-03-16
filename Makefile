@@ -7,4 +7,4 @@ a_wm: src/awm.c
 	$(CC) $^ $(CFLAGS) -o awm
 
 install:
-	sudo cp awm /usr/locla/bin/awm
+	sudo cp awm /usr/local/bin/awm
