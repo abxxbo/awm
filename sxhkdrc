@@ -1,0 +1,6 @@
+# example sxhkdrc -- provided by awm
+super + Return
+  urxvt
+
+super + @space
+  rofi -show run

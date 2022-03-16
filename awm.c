@@ -1,4 +1,5 @@
 #include <X11/Xlib.h>
+#include <unistd.h>
 
 #define MAX_OF(a, b) ((a) > (b) ? (a) : (b))
 
@@ -23,6 +24,7 @@ int main(void){
   XGrabButton(dpy, 3, Mod4Mask, DefaultRootWindow(dpy), True,
               ButtonPressMask|ButtonReleaseMask|PointerMotionMask, GrabModeAsync, GrabModeAsync, None, None);
 
+  execl("/bin/bash", "/bin/bash", "sxhkd -c ~/.config/awm/sxhkdrc", 0);
 
   // Event loop
   start.subwindow = None;
