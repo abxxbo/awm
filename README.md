@@ -1,11 +1,16 @@
-# awm (Abxxbo's Window Manager
-<a href="img/scrot1.png"><img src="img/scrot1.png" width="43%" align="right"></a>
+# awm (Abxxbo's Window Manager)
 
-A very small window manager.
+<div align="center">
+    <a href="img/scrot1.png"><img src="img/scrot1.png" width="50%" align="center"></a><a href="img/scrot2.png"><img src="img/scrot2.png" width="50%" align="center"></a>
+</div>
+
+<br>
+
+## Features
 
 - Floating only
 - No ICCCM
-- No EWMH
+- No full implementation of EWMH
 - No window borders
 
 ## Default Keybinds
@@ -14,6 +19,7 @@ A very small window manager.
 
 | keybind       | action        |
 | ------------- | ------------- |
+| `Mouse`       | focus         |
 | `Mod4+R`      | raise window  |
 | `Mod4+Q`      | kill window   |
 | `Mod4+Mouse1` | move window   |
