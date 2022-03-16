@@ -4,3 +4,7 @@ super + Return
 
 super + @space
   rofi -show run
+
+# re-run autostart
+super + Escape
+  /bin/bash ~/.config/awm/autostart
