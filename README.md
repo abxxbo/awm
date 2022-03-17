@@ -9,9 +9,8 @@
 ## Features
 
 - Floating only
-- No ICCCM
-- No full implementation of EWMH
-- No window borders
+- Virtual workspaces
+- Titlebars
 
 ## Default Keybinds
 
@@ -34,6 +33,7 @@
 
 ## Dependencies
 - `xlib`
+- `sxhkd`
 
 ## Installation
 1. copy `sxhkdrc` to `~/.config/awm/sxhkdrc`
@@ -45,6 +45,3 @@
 exec awm
 ```
 
-## Inspired by
-- [sowm](https://github.com/dylanaraps/sowm)
-- [tinywm](http://incise.org/tinywm.html)
