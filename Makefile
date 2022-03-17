@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -lX11 -g -O2 -std=gnu99 -Iinclude/
+CFLAGS := -lxcb -lxcb-keysyms -lm -g -O2 -std=gnu99 -Iinclude/
 
 .PHONY: a_wm
 
