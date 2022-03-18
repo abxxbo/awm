@@ -38,6 +38,8 @@
 
 ## Installation
 
+<a href="https://repology.org/badge/vertical-allrepos/awm.svg"><img src="https://repology.org/badge/vertical-allrepos/awm.svg" align="right"></img></a>
+
 If you are on arch linux, you can install awm through the AUR as [awm-git](https://aur.archlinux.org/packages/awm-git).
 
 If you are not running arch, first check if awm is in the repositories. If it isn't, use this to install awm:
