@@ -1,16 +1,17 @@
+## Awm makefile
 CC := gcc
-CFLAGS := -lxcb -lxcb-keysyms -lm -g -O2 -std=gnu99 -Iinclude/
+LDFLAGS := -lxcb -lxcb-keysyms -lm
+CFLAGS := -Iinclude -g -O2 -std=gnu2x
 
-.PHONY: a_wm
+BINARY := awm
 
-a_wm: src/awm.c
-	$(CC) $^ $(CFLAGS) -o awm
+.PHONY: build
 
-run: a_wm
-	@bash run-xephyr.sh
+build: src/awm.c
+	@$(CC) $^ $(CFLAGS) $(LDFLAGS) -o $(BINARY)
 
-clean: ./awm
-	@rm $^
+clean:
+	@rm $(BINARY)
 
 install:
-	@sudo cp awm /usr/local/bin/awm
+	@sudo cp $(BINARY) /usr/local/bin/$(BINARY)
