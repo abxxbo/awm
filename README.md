@@ -32,6 +32,7 @@
 | ------------- | ------------- |
 | `Mod4+Return` | `urxvt`       |
 | `Mod4+Space`  | `rofi`        |
+| `Mod4+P`      | `maim`        |
 
 ## Dependencies
 - xcb

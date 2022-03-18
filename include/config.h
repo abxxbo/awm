@@ -24,11 +24,13 @@ char* default_shell = "/bin/bash ";              // The shell to run autostart s
 // Aliased commands
 static char *termcmd[] = { "urxvt", NULL };
 static char *menucmd[] = { "rofi", "-show", "run", NULL };
+static char *scrcmd[]  = { "maim", "-s", "-u", "|", "xclip", "-se", "c", "-t", "image/png", NULL };
 
 // Keybinds
 static Key keys[] = {
 	{ MOD4,      XK_Return, spawn,      termcmd }, // Execute terminal
 	{ MOD4,      XK_space,  spawn,      menucmd }, // Run program launcher
+  { MOD4,      XK_p,      spawn,      scrcmd  }, // Execute maim
 	{ MOD4,      XK_f,      fullclient, NULL },    // Full screen active window
 	{ MOD4,      XK_q,      killclient, NULL },    // Kill active window
 };
