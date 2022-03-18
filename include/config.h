@@ -1,35 +1,29 @@
-#pragma once
+// Read docs/configuring.h for more information on
+// how to configure AWM.
 
-#include <xcb/xcb_keysyms.h>
-#include <xcb/xcb.h>
+#include <X11/keysym.h>
 
-#include "exec.h"
+#define MOD1                   XCB_MOD_MASK_4
+#define MOD2                   XCB_MOD_MASK_SHIFT
 
-/* Modifier masks */
-#define MOD1    XCB_MOD_MASK_1    // Alt
-#define MOD4    XCB_MOD_MASK_4    // Super
+// Window parameters
+#define WINDOW_WIDTH           600      
+#define WINDOW_HEIGHT          400      
+#define WINDOW_MIN_W           60       // Minimum size, in px
+#define WINDOW_MIN_H           40       // Minimum size, in px
+#define BORDER_WIDTH           1        // px
+#define BORDER_COLOR_UNFOCUSED 0x696969 // fmt: 0xRRGGBB
+#define BORDER_COLOR_FOCUSED   0xFFFFFF // fmt: 0xRRGGBB
 
-#define XKEnter 0xff0d
-#define XKSpace 0x0020
+// Aliased commands
+static char *termcmd[] = { "urxvt", NULL };
+static char *menucmd[] = { "rofi", "-show", "run", NULL };
 
-/* Window properties */
-#define WINDOW_WIDTH    600
-#define WINDOW_HEIGHT   400
-#define WINDOW_MIN_W    60        // Smallest possible width
-#define WINDOW_MIN_H    40        // Smallest possible height
-
-/* Border */
-#define BORDER_WIDTH            1         // in px
-#define BORDER_COLOR_UNFOCUSED  0x696969  // Unfocused border color (RRGGBB)
-#define BORDER_COLOR_FOCUSED    0xFFFFFF  // Focused border color
-
-/* Commands */
-static char* termcmd[] = { "urxvt", NULL };
-static char* menucmd[] = { "rofi", "-show", "run", NULL };
-
-
-/* Key aliases */
+// Keybinds
 static Key keys[] = {
-	{ MOD1,      0xff0d, spawn,      termcmd }, /* 0xff0d = XK_Enter */
-	{ MOD1,      0x0020, spawn,      menucmd }, /* 0x0020 = XK_space */
+	{ MOD1,      XK_Return, spawn,      termcmd }, // Execute terminal
+	{ MOD1,      XK_space,  spawn,      menucmd }, // Run program launcher
+	{ MOD1,      XK_f,      fullclient, NULL },    // Full screen active window
+	{ MOD1,      XK_q,      killclient, NULL },    // Kill active window
 };
+

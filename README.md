@@ -11,6 +11,7 @@
 - Floating only
 - Virtual workspaces
 - Titlebars
+- Modular config system
 
 ## Default Keybinds
 
@@ -20,6 +21,7 @@
 | ------------- | ------------- |
 | `Mouse`       | focus         |
 | `Mod4+R`      | raise window  |
+| `Mod4+F`      | fullscreen    |
 | `Mod4+Q`      | kill window   |
 | `Mod4+Mouse1` | move window   |
 | `Mod4+Mouse3` | resize window |
@@ -32,15 +34,13 @@
 | `Mod4+Space`  | `rofi`        |
 
 ## Dependencies
-- `xlib`
-- `sxhkd`
+- xcb
 
 ## Installation
-1. copy `sxhkdrc` to `~/.config/awm/sxhkdrc`
-2. Create a autostart file, `~/.config/awm/autostart`
-3. Build awm: `make`
-4. Install via `sudo make install`
-5. Add awm to `~/.xinitrc`:
+1. Create a autostart file, `~/.config/awm/autostart`
+2. Build awm: `make`
+3. Install via `sudo make install`
+4. Add awm to `~/.xinitrc`:
 ```sh
 exec awm
 ```

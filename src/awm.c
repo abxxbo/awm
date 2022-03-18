@@ -1,14 +1,10 @@
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include <xcb/xcb.h>
 #include <xcb/xcb_keysyms.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "awm.h"
 #include "config.h"
-
-#define LMB 1
-#define RMB 3
 
 #define UNUSED(x) (void)(x)
 
@@ -16,6 +12,43 @@ static xcb_connection_t * dpy;
 static xcb_screen_t * screen;
 static xcb_drawable_t win;
 static uint32_t values[3];
+
+static void killclient(char **com) {
+	UNUSED(com);
+	xcb_kill_client(dpy, win);
+}
+
+static void closewm(char **com) {
+	UNUSED(com);
+	if (dpy != NULL) {
+		xcb_disconnect(dpy);
+	}
+}
+
+static void spawn(char **com) {
+	if (fork() == 0) {
+		setsid();
+		if (fork() != 0) {
+			_exit(0);
+		}
+		execvp((char*)com[0], (char**)com);
+		_exit(0);
+	}
+	wait(NULL);
+}
+
+static void fullclient(char **com) {
+	UNUSED(com);
+	uint32_t vals[4];
+	vals[0] = 0 - BORDER_WIDTH;
+	vals[1] = 0 - BORDER_WIDTH;
+	vals[2] = screen->width_in_pixels;
+	vals[3] = screen->height_in_pixels;
+	xcb_configure_window(dpy, win, XCB_CONFIG_WINDOW_X |
+		XCB_CONFIG_WINDOW_Y | XCB_CONFIG_WINDOW_WIDTH |
+		XCB_CONFIG_WINDOW_HEIGHT, vals);
+	xcb_flush(dpy);
+}
 
 static void handleButtonPress(xcb_generic_event_t *ev) {
 	xcb_button_press_event_t  *e = (xcb_button_press_event_t *) ev;
@@ -56,7 +89,7 @@ static void handleMotionNotify(xcb_generic_event_t *ev) {
 					| XCB_CONFIG_WINDOW_HEIGHT, values);
 			}
 		}
-	} else;
+	} else {}
 }
 
 static xcb_keycode_t *xcb_get_keycodes(xcb_keysym_t keysym) {
@@ -147,53 +180,49 @@ static void handleMapRequest(xcb_generic_event_t *ev) {
 	setFocus(e->window);
 }
 
-// Event handler
-static int eventHandler(void){
-  int ret = xcb_connection_has_error(dpy);
-  if(ret == 0){
-    xcb_generic_event_t* ev = xcb_wait_for_event(dpy);
-    if(!ev){
-      handler_func_t* handler;
-      for(handler = handler_funs; handler->func != NULL; handler++){
-        if((ev->response_type & ~0x80) == handler->request) handler->func(ev);
-      }
-      free(ev);
-    }
-  }
-  xcb_flush(dpy);
-  return ret;
+static int eventHandler(void) {
+	int ret = xcb_connection_has_error(dpy);
+	if (ret == 0) {
+		xcb_generic_event_t *ev = xcb_wait_for_event(dpy);
+		if (ev != NULL) {
+			handler_func_t *handler;
+			for (handler = handler_funs; handler->func != NULL; handler++) {
+				if ((ev->response_type & ~0x80) == handler->request) {
+					handler->func(ev);
+				}
+			}
+			free(ev);
+		}
+	}
+	xcb_flush(dpy);
+	return ret;
 }
 
-// Setup root window and grab
-// mouse buttons (with Mod4)
-static void setup_awm(void){
-  values[0] = XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_STRUCTURE_NOTIFY
-          | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_PROPERTY_CHANGE;
-  // Change attributes of root window
-  xcb_change_window_attributes_checked(dpy, screen->root, XCB_CW_EVENT_MASK, values);
-  
-  // If any key is grabbed, release it.
-  xcb_ungrab_key(dpy, XCB_GRAB_ANY, screen->root, XCB_MOD_MASK_ANY);
-  int ktblsz = sizeof(keys) / sizeof(*keys);
-  for(int i = 0; i < ktblsz; ++i){
-    xcb_keycode_t* keycode = xcb_get_keycodes(keys[i].keysym);
-    // If no key detected, grab one
-    if(!keycode) xcb_grab_key(dpy, 1, screen->root, keys[i].mod, *keycode,
-                              XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
-  }
-  // Flush
-  xcb_flush(dpy);
- 
-  // Grab LMB and RMB with Super as the modifier. (Mod4)
-  xcb_grab_button(dpy, 0, screen->root, XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_BUTTON_RELEASE,
-                  XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC, screen->root, XCB_NONE, LMB, XCB_MOD_MASK_4);
-  xcb_grab_button(dpy, 0, screen->root, XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_BUTTON_RELEASE,
-                  XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC, screen->root, XCB_NONE, RMB, XCB_MOD_MASK_4);
-
-  // Flush again
-  xcb_flush(dpy);
+static void setup_awm(void) {
+	values[0] = XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT
+		| XCB_EVENT_MASK_STRUCTURE_NOTIFY
+		| XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY
+		| XCB_EVENT_MASK_PROPERTY_CHANGE;
+	xcb_change_window_attributes_checked(dpy, screen->root,
+		XCB_CW_EVENT_MASK, values);
+	xcb_ungrab_key(dpy, XCB_GRAB_ANY, screen->root, XCB_MOD_MASK_ANY);
+	int key_table_size = sizeof(keys) / sizeof(*keys);
+	for (int i = 0; i < key_table_size; ++i) {
+		xcb_keycode_t *keycode = xcb_get_keycodes(keys[i].keysym);
+		if (keycode != NULL) {
+			xcb_grab_key(dpy, 1, screen->root, keys[i].mod, *keycode,
+				XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC );
+		}
+	}
+	xcb_flush(dpy);
+	xcb_grab_button(dpy, 0, screen->root, XCB_EVENT_MASK_BUTTON_PRESS |
+		XCB_EVENT_MASK_BUTTON_RELEASE, XCB_GRAB_MODE_ASYNC,
+		XCB_GRAB_MODE_ASYNC, screen->root, XCB_NONE, 1, MOD1);
+	xcb_grab_button(dpy, 0, screen->root, XCB_EVENT_MASK_BUTTON_PRESS |
+		XCB_EVENT_MASK_BUTTON_RELEASE, XCB_GRAB_MODE_ASYNC,
+		XCB_GRAB_MODE_ASYNC, screen->root, XCB_NONE, 3, MOD1);
+	xcb_flush(dpy);
 }
-
 
 int main(void){
   int ret;
