@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <xcb/xcb.h>
 #include <xcb/xcb_keysyms.h>
+#include <string.h>
 #include "awm.h"
 #include "config.h"
 
@@ -217,10 +218,10 @@ static void setup_awm(void) {
 	xcb_flush(dpy);
 	xcb_grab_button(dpy, 0, screen->root, XCB_EVENT_MASK_BUTTON_PRESS |
 		XCB_EVENT_MASK_BUTTON_RELEASE, XCB_GRAB_MODE_ASYNC,
-		XCB_GRAB_MODE_ASYNC, screen->root, XCB_NONE, 1, MOD1);
+		XCB_GRAB_MODE_ASYNC, screen->root, XCB_NONE, 1, MOD4);
 	xcb_grab_button(dpy, 0, screen->root, XCB_EVENT_MASK_BUTTON_PRESS |
 		XCB_EVENT_MASK_BUTTON_RELEASE, XCB_GRAB_MODE_ASYNC,
-		XCB_GRAB_MODE_ASYNC, screen->root, XCB_NONE, 3, MOD1);
+		XCB_GRAB_MODE_ASYNC, screen->root, XCB_NONE, 3, MOD4);
 	xcb_flush(dpy);
 }
 
@@ -234,6 +235,14 @@ int main(void){
   // If no error, setup everything
   screen = xcb_setup_roots_iterator(xcb_get_setup(dpy)).data;
   setup_awm();
+
+  // Execute autostart script
+  char* full_cmd;
+  full_cmd = malloc(strlen(default_shell)+1);
+  strcpy(full_cmd, default_shell);
+  strcat(full_cmd, abs_path_conf);
+
+  system(full_cmd); // TODO: terrible
 
   // event loop
   while(ret == 0){

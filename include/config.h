@@ -3,8 +3,14 @@
 
 #include <X11/keysym.h>
 
-#define MOD1                   XCB_MOD_MASK_4
-#define MOD2                   XCB_MOD_MASK_SHIFT
+
+// Modifiers
+#define MOD4                   XCB_MOD_MASK_4
+
+
+// Autostart
+char* abs_path_conf = "/home/$(whoami)/.config/awm/autostart";
+char* default_shell = "/bin/bash ";                             // The shell that awm will use to run autostart script with
 
 // Window parameters
 #define WINDOW_WIDTH           600      
@@ -21,9 +27,9 @@ static char *menucmd[] = { "rofi", "-show", "run", NULL };
 
 // Keybinds
 static Key keys[] = {
-	{ MOD1,      XK_Return, spawn,      termcmd }, // Execute terminal
-	{ MOD1,      XK_space,  spawn,      menucmd }, // Run program launcher
-	{ MOD1,      XK_f,      fullclient, NULL },    // Full screen active window
-	{ MOD1,      XK_q,      killclient, NULL },    // Kill active window
+	{ MOD4,      XK_Return, spawn,      termcmd }, // Execute terminal
+	{ MOD4,      XK_space,  spawn,      menucmd }, // Run program launcher
+	{ MOD4,      XK_f,      fullclient, NULL },    // Full screen active window
+	{ MOD4,      XK_q,      killclient, NULL },    // Kill active window
 };
 
