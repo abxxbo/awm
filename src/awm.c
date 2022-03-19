@@ -236,14 +236,6 @@ int main(void){
   screen = xcb_setup_roots_iterator(xcb_get_setup(dpy)).data;
   setup_awm();
 
-  // Execute autostart script
-  char* full_cmd;
-  full_cmd = malloc(strlen(default_shell)+1);
-  strcpy(full_cmd, default_shell);
-  strcat(full_cmd, abs_path_conf);
-
-  system(full_cmd); // TODO: terrible
-
   // event loop
   while(ret == 0){
     ret = eventHandler();
