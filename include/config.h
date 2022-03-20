@@ -1,4 +1,4 @@
-// Read docs/configuring.h for more information on
+// Read docs/configuring.md for more information on
 // how to configure AWM.
 
 #include <X11/keysym.h>
