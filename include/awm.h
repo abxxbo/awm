@@ -55,9 +55,4 @@ static handler_func_t handler_funs[] = {
 };
 
 /* intialize */
-static void setup(void);
-
-/* error handling & misc. */
-static int die(char *errstr);
-static int strcmp_c(char *str1, char *str2);
-
+static void setup_awm(void);

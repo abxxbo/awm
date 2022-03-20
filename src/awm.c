@@ -4,6 +4,8 @@
 #include <xcb/xcb.h>
 #include <xcb/xcb_keysyms.h>
 #include <string.h>
+#include <stdio.h>
+
 #include "awm.h"
 #include "config.h"
 
@@ -230,7 +232,10 @@ int main(void){
   // Create connection to display
   dpy = xcb_connect(NULL, NULL);
   ret = xcb_connection_has_error(dpy);
-  if(ret > 0) perror("awm");
+  if(ret > 0){
+		fprintf(stderr, "awm failure\n");
+		return 2;
+	}
 
   // If no error, setup everything
   screen = xcb_setup_roots_iterator(xcb_get_setup(dpy)).data;
