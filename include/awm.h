@@ -1,5 +1,3 @@
-/* See LICENSE file for copyright and license details. */
-
 /* typedefs */
 typedef struct {
     unsigned int mod;
@@ -12,6 +10,11 @@ typedef struct {
     uint32_t request;
     void (*func)(xcb_generic_event_t *ev);
 } handler_func_t;
+
+typedef struct {
+    const char* app;
+    int workspace_id;
+} ForceWorkspace;
 
 /* convert keycode to keysym and back */
 static xcb_keycode_t *xcb_get_keycodes(xcb_keysym_t keysym);
