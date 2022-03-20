@@ -50,3 +50,7 @@ static ForceWorkspace force_apps[] = {
 	// fmt: {[Application], [workspace id]}
 	{ "urxvt", WORKSPACE_ID_0 } 					// Force urxvt onto workspace 0 (workspace 1)
 };
+
+/******************************************************************************************************************/
+
+#define BAR_FULL_W 1080

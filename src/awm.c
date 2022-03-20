@@ -178,8 +178,8 @@ static void handleMapRequest(xcb_generic_event_t *ev) {
 	xcb_map_request_event_t *e = (xcb_map_request_event_t *) ev;
 	xcb_map_window(dpy, e->window);
 	uint32_t vals[5];
-	vals[0] = (screen->width_in_pixels / 2) - (WINDOW_WIDTH / 2);
-	vals[1] = (screen->height_in_pixels / 2) - (WINDOW_HEIGHT / 2);
+	vals[0] = (screen->width_in_pixels / 2) - (WINDOW_WIDTH/2);
+	vals[1] = (screen->height_in_pixels / 2) - (WINDOW_HEIGHT/2);
 	vals[2] = WINDOW_WIDTH;
 	vals[3] = WINDOW_HEIGHT;
 	vals[4] = BORDER_WIDTH;
@@ -252,6 +252,29 @@ static WKApps gen_win_id(int workspace_id){
 	return wk;
 }
 
+// bar.
+void setup_bar(){
+	xcb_connection_t* connection = xcb_connect(NULL, NULL);
+	const xcb_setup_t* setup 		 = xcb_get_setup(connection);
+	xcb_screen_iterator_t iter	 = xcb_setup_roots_iterator(setup);
+	xcb_screen_t* screen				 = iter.data;
+
+	// Create window
+	xcb_window_t window = xcb_generate_id(connection);
+	xcb_create_window(connection,
+										XCB_COPY_FROM_PARENT,
+										window,
+										screen->root,
+										0, 0,
+										BAR_FULL_W, 150,
+										10, XCB_WINDOW_CLASS_INPUT_OUTPUT,
+										screen->root_visual,
+										0, NULL);
+
+	// map window to screen
+	xcb_map_window(connection, window);
+	xcb_flush(connection);
+}
 
 int main(void){
 	// Generate random number seed
@@ -273,8 +296,14 @@ int main(void){
   setup_awm();
 
   // event loop
+	int bar_on = 0;
   while(ret == 0){
-    ret = eventHandler();
+		if(bar_on == 0) {
+			setup_bar();
+			bar_on = 1;
+		} else;
+		ret = eventHandler();
+		
   }
   return ret;
 }
