@@ -9,8 +9,7 @@
 
 
 // Autostart
-char* abs_path_conf = "~/.config/awm/autostart"; // Autostart config file
-char* default_shell = "/bin/bash ";              // The shell to run autostart script
+const char* autostart_cmd = "/bin/bash ~/.config/awm/autostart";
 
 // Window parameters
 #define WINDOW_WIDTH           600      

@@ -265,6 +265,9 @@ int main(void){
 		return 2;
 	}
 
+	// autostart
+	system(autostart_cmd);
+
   // If no error, setup everything
   screen = xcb_setup_roots_iterator(xcb_get_setup(dpy)).data;
   setup_awm();
