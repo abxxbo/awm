@@ -5,6 +5,7 @@
 #include <xcb/xcb_keysyms.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "awm.h"
 #include "config.h"
@@ -15,6 +16,8 @@ static xcb_connection_t * dpy;
 static xcb_screen_t * screen;
 static xcb_drawable_t win;
 static uint32_t values[3];
+
+/***************************************************************************************/
 
 static void killclient(char **com) {
 	UNUSED(com);
@@ -52,6 +55,45 @@ static void fullclient(char **com) {
 		XCB_CONFIG_WINDOW_HEIGHT, vals);
 	xcb_flush(dpy);
 }
+
+/***************************************************************************************/
+
+static void setFocus(xcb_drawable_t window) {
+	if ((window != 0) && (window != screen->root)) {
+		xcb_set_input_focus(dpy, XCB_INPUT_FOCUS_POINTER_ROOT, window,
+			XCB_CURRENT_TIME);
+	}
+}
+
+static void setFocusColor(xcb_window_t window, int focus) {
+	if ((BORDER_WIDTH > 0) && (screen->root != window) && (0 != window)) {
+		uint32_t vals[1];
+		vals[0] = focus ? BORDER_COLOR_FOCUSED : BORDER_COLOR_UNFOCUSED;
+		xcb_change_window_attributes(dpy, window, XCB_CW_BORDER_PIXEL, vals);
+		xcb_flush(dpy);
+	}
+}
+
+/***************************************************************************************/
+
+
+static xcb_keycode_t *xcb_get_keycodes(xcb_keysym_t keysym) {
+	xcb_key_symbols_t *keysyms = xcb_key_symbols_alloc(dpy);
+	xcb_keycode_t *keycode;
+	keycode = (!(keysyms) ? NULL : xcb_key_symbols_get_keycode(keysyms, keysym));
+	xcb_key_symbols_free(keysyms);
+	return keycode;
+}
+
+static xcb_keysym_t xcb_get_keysym(xcb_keycode_t keycode) {
+	xcb_key_symbols_t *keysyms = xcb_key_symbols_alloc(dpy);
+	xcb_keysym_t keysym;
+	keysym = (!(keysyms) ? 0 : xcb_key_symbols_get_keysym(keysyms, keycode, 0));
+	xcb_key_symbols_free(keysyms);
+	return keysym;
+}
+
+/***************************************************************************************/
 
 static void handleButtonPress(xcb_generic_event_t *ev) {
 	xcb_button_press_event_t  *e = (xcb_button_press_event_t *) ev;
@@ -93,38 +135,6 @@ static void handleMotionNotify(xcb_generic_event_t *ev) {
 			}
 		}
 	} else {}
-}
-
-static xcb_keycode_t *xcb_get_keycodes(xcb_keysym_t keysym) {
-	xcb_key_symbols_t *keysyms = xcb_key_symbols_alloc(dpy);
-	xcb_keycode_t *keycode;
-	keycode = (!(keysyms) ? NULL : xcb_key_symbols_get_keycode(keysyms, keysym));
-	xcb_key_symbols_free(keysyms);
-	return keycode;
-}
-
-static xcb_keysym_t xcb_get_keysym(xcb_keycode_t keycode) {
-	xcb_key_symbols_t *keysyms = xcb_key_symbols_alloc(dpy);
-	xcb_keysym_t keysym;
-	keysym = (!(keysyms) ? 0 : xcb_key_symbols_get_keysym(keysyms, keycode, 0));
-	xcb_key_symbols_free(keysyms);
-	return keysym;
-}
-
-static void setFocus(xcb_drawable_t window) {
-	if ((window != 0) && (window != screen->root)) {
-		xcb_set_input_focus(dpy, XCB_INPUT_FOCUS_POINTER_ROOT, window,
-			XCB_CURRENT_TIME);
-	}
-}
-
-static void setFocusColor(xcb_window_t window, int focus) {
-	if ((BORDER_WIDTH > 0) && (screen->root != window) && (0 != window)) {
-		uint32_t vals[1];
-		vals[0] = focus ? BORDER_COLOR_FOCUSED : BORDER_COLOR_UNFOCUSED;
-		xcb_change_window_attributes(dpy, window, XCB_CW_BORDER_PIXEL, vals);
-		xcb_flush(dpy);
-	}
 }
 
 static void handleKeyPress(xcb_generic_event_t *ev) {
@@ -201,6 +211,8 @@ static int eventHandler(void) {
 	return ret;
 }
 
+/***************************************************************************************/
+
 static void setup_awm(void) {
 	values[0] = XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT
 		| XCB_EVENT_MASK_STRUCTURE_NOTIFY
@@ -227,7 +239,23 @@ static void setup_awm(void) {
 	xcb_flush(dpy);
 }
 
+/***************************************************************************************/
+
+static void switch_workspace(int workspace_id){
+
+}
+
+static WKApps gen_win_id(int workspace_id){
+	int window_id = rand(); // randomly generate a window id
+	WKApps wk = { .app_id = workspace_id+window_id,
+								 .workspace_id = workspace_id };
+	return wk;
+}
+
+
 int main(void){
+	// Generate random number seed
+	srand((unsigned int)time(NULL));
   int ret;
   // Create connection to display
   dpy = xcb_connect(NULL, NULL);
