@@ -239,43 +239,6 @@ static void setup_awm(void) {
 	xcb_flush(dpy);
 }
 
-/***************************************************************************************/
-
-static void switch_workspace(int workspace_id){
-
-}
-
-static WKApps gen_win_id(int workspace_id){
-	int window_id = rand(); // randomly generate a window id
-	WKApps wk = { .app_id = workspace_id+window_id,
-								 .workspace_id = workspace_id };
-	return wk;
-}
-
-// bar.
-void setup_bar(){
-	xcb_connection_t* connection = xcb_connect(NULL, NULL);
-	const xcb_setup_t* setup 		 = xcb_get_setup(connection);
-	xcb_screen_iterator_t iter	 = xcb_setup_roots_iterator(setup);
-	xcb_screen_t* screen				 = iter.data;
-
-	// Create window
-	xcb_window_t window = xcb_generate_id(connection);
-	xcb_create_window(connection,
-										XCB_COPY_FROM_PARENT,
-										window,
-										screen->root,
-										0, 0,
-										BAR_FULL_W, 150,
-										10, XCB_WINDOW_CLASS_INPUT_OUTPUT,
-										screen->root_visual,
-										0, NULL);
-
-	// map window to screen
-	xcb_map_window(connection, window);
-	xcb_flush(connection);
-}
-
 int main(void){
 	// Generate random number seed
 	srand((unsigned int)time(NULL));
@@ -296,12 +259,7 @@ int main(void){
   setup_awm();
 
   // event loop
-	int bar_on = 0;
   while(ret == 0){
-		if(bar_on == 0) {
-			setup_bar();
-			bar_on = 1;
-		} else;
 		ret = eventHandler();
 		
   }
