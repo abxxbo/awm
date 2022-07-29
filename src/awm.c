@@ -252,7 +252,9 @@ int main(void){
 	}
 
 	// autostart
-	system(autostart_cmd);
+	if((system(autostart_cmd) != 0)){
+		fprintf(stderr, "awm: autostart probably does not exist.\n");
+	}
 
   // If no error, setup everything
   screen = xcb_setup_roots_iterator(xcb_get_setup(dpy)).data;

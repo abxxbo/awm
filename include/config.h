@@ -1,6 +1,3 @@
-// Read docs/configuring.md for more information on
-// how to configure AWM.
-
 #include <X11/keysym.h>
 
 
@@ -27,9 +24,9 @@ static char *scrcmd[]  = { "maim", "-s", "-u", "|", "xclip", "-se", "c", "-t", "
 
 // Keybinds
 static Key keys[] = {
-	{ MOD4,      XK_Return, spawn,      termcmd }, // Execute terminal
+	{ MOD4, 	 XK_Return, spawn,      termcmd }, // Execute terminal
 	{ MOD4,      XK_space,  spawn,      menucmd }, // Run program launcher
-  { MOD4,      XK_p,      spawn,      scrcmd  }, // Execute maim
+    { MOD4,      XK_p,      spawn,      scrcmd  }, // Execute maim
 	{ MOD4,      XK_f,      fullclient, NULL },    // Full screen active window
 	{ MOD4,      XK_q,      killclient, NULL },    // Kill active window
 };
