@@ -9,8 +9,6 @@
 ## Features
 
 - Floating only
-- Virtual workspaces
-- Titlebars
 - Modular config system
 
 ## Default Keybinds
